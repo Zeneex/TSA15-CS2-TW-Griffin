@@ -23,6 +23,16 @@ namespace FallingLetters
             Console.BufferHeight = Console.WindowHeight;
             Console.BufferWidth = Console.WindowWidth;
 
+            for (int i = 0; i < 10; i++)
+            {
+                positionX.Add(0);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                positionY.Add(0);
+            }
+
             GetLetter();
             while (true)
             {
@@ -155,3 +165,4 @@ namespace FallingLetters
         }
     }
 }
+
