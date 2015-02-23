@@ -19,7 +19,10 @@ namespace Words
             {
                 Console.WriteLine("Word not found!");
             }
-
+/*
+            string result=FindWord("dgfhjkll;kjhgf")?"Word exists":"Word does not exist";
+            Console.WriteLine(result);
+ */
         }
 
 
@@ -29,7 +32,7 @@ namespace Words
             string line;
 
 
-            using (System.IO.StreamReader file = new System.IO.StreamReader("F:\\telerik\\csharp II\\_Griffin\\TSA15-CS2-TW-Griffin\\wordlist.txt"))
+            using (System.IO.StreamReader file = new System.IO.StreamReader(@"../../wordlist.txt"))
             {
                 while ((line = file.ReadLine()) != null)
                 {
