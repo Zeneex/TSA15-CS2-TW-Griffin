@@ -42,7 +42,7 @@ namespace ReadingGriffin
                 Move();
 
                 Thread.Sleep(60);
-
+            }
         }
         
         static void GetLetter()
@@ -160,8 +160,5 @@ namespace ReadingGriffin
             //PrintAtPosition(GetInitialPosition(), LetterPositionY, randomLetter);
 
         }
-    }
-}
-
     }
 }
