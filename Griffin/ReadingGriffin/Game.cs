@@ -38,12 +38,12 @@ namespace ReadingGriffin
             for (int i = 0; i < 10; i++)
             {
                 positionX.Add(0);
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
                 positionY.Add(0);
             }
+
+//          Console.WriteLine(FindWord("dog") ? "Word exists" : "Word does not exist"); 
+//          Console.WriteLine(FindWord("dgfhjkll;kjhgf") ? "Word exists" : "Word does not exist");
+//          Console.Read();
 
             GetLetter();
             while (true)
@@ -233,6 +233,31 @@ namespace ReadingGriffin
             Console.BufferWidth = Console.WindowWidth;
         }
         //end menu things
+
+
+        // scan the dictionary for the "catched" word
+        static bool FindWord(string searchedWord)
+        {
+            string line;
+
+
+            using (System.IO.StreamReader file = new System.IO.StreamReader(@"../../wordlist.txt"))
+            {
+                while ((line = file.ReadLine()) != null)
+                {
+                    if (line == searchedWord)
+                    {
+                        // sb.AppendLine(line.ToString());
+                        //   Console.WriteLine("Word found! ");
+                        // Console.WriteLine(sb.ToString());
+                        return true;
+                    }
+
+                }
+                return false;
+            }
+
+        }
 
 
     }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿ /*using System;
 using System.Text;
 
-namespace Words
+namespace ReadingGriffin
 {
     class WordFinder
     {
-        static void Main()
+       static void Main()
         {
             string searchedWord = string.Empty;
             Console.WriteLine("Please type a word: ");
@@ -19,10 +19,7 @@ namespace Words
             {
                 Console.WriteLine("Word not found!");
             }
-/*
-            string result=FindWord("dgfhjkll;kjhgf")?"Word exists":"Word does not exist";
-            Console.WriteLine(result);
- */
+ 
         }
 
 
@@ -51,3 +48,4 @@ namespace Words
         }
     }
 }
+*/
