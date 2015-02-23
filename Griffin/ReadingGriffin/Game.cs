@@ -8,7 +8,12 @@ namespace ReadingGriffin
 {
     class Game
     {
-         static int LetterGathererX = Console.WindowWidth / 2 - 2;
+        //menu constants
+        public const int MenuXPosition = 80;
+        public const char MenuCHar = '*';
+        //
+
+        static int LetterGathererX = Console.WindowWidth / 2 - 2;
         static int GathererSize = 3;
         static int LetterPositionY = 0;
         static Random Count = new Random();
@@ -16,10 +21,17 @@ namespace ReadingGriffin
         static List<int> positionX = new List<int>();
         static List<int> positionY = new List<int>();
         static List<char> Letters = new List<char>();
-        
+
         static void Main()
         {
-              //Console.CursorVisible = false;
+            //menu mehods use
+            Player newPlayer = new Player();
+            PlayerInfo(newPlayer);
+            ConsoleParameters();
+
+
+
+            //Console.CursorVisible = false;
             Console.BufferHeight = Console.WindowHeight;
             Console.BufferWidth = Console.WindowWidth;
 
@@ -37,14 +49,14 @@ namespace ReadingGriffin
             while (true)
             {
                 Console.Clear();
+                PrintMenu(newPlayer);
                 PrintLetter();
                 LetterGatherer();
                 Move();
-
-                Thread.Sleep(60);
+                Thread.Sleep(500);
             }
         }
-        
+
         static void GetLetter()
         {
             char[] letters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -146,19 +158,82 @@ namespace ReadingGriffin
             {
                 spaceBetweenNextLetter--;
             }
-            
-            //if (LetterPositionY == Console.WindowHeight -1)
-            //{
-            //    LetterPositionY = 0;
-            //}
+        }
+        //if (LetterPositionY == Console.WindowHeight -1)
+        //{
+        //    LetterPositionY = 0;
+        //}
 
 
 
 
-            //LetterPositionY++;
+        //LetterPositionY++;
 
-            //PrintAtPosition(GetInitialPosition(), LetterPositionY, randomLetter);
+        //PrintAtPosition(GetInitialPosition(), LetterPositionY, randomLetter);
+
+
+        //menu things, all class and mathods that we need
+
+        //here we save player's info
+        class Player
+        {
+            public string Name { get; set; }
+            public int Score { get; set; }
+            public DateTime PlayDate { get; set; }
+
+            public string PlayerWord { get; set; }
+        }
+
+        static void PlayerInfo(Player player)
+        {
+            Console.WriteLine("Enter your name.");
+            player.Name = Console.ReadLine();
+            char[] invalidChar = {' '};
+            string[] name = player.Name.Split(invalidChar, StringSplitOptions.RemoveEmptyEntries);
+            while (name.Length == 0)
+            {
+                Console.WriteLine("Enter valid name");
+                player.Name = Console.ReadLine();
+                name = player.Name.Split(invalidChar, StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            player.Score = 0;
+            player.PlayDate = DateTime.Now;
+            Console.WriteLine(player.Name);
 
         }
+
+        static void PrintMenu(Player player)
+        {
+            const int PlayerInfoCordinateY = 2;
+            for (int i = 0; i < 30; i++)
+            {
+                Console.SetCursorPosition(MenuXPosition, i);
+                Console.Write(MenuCHar);
+            }
+            Console.SetCursorPosition(MenuXPosition + 3, PlayerInfoCordinateY);
+            Console.Write("Name: {0}", player.Name);
+
+            Console.SetCursorPosition(MenuXPosition + 3, PlayerInfoCordinateY + 2);
+            Console.Write("Score: {0}", player.Score);
+
+            Console.SetCursorPosition(MenuXPosition + 3, PlayerInfoCordinateY + 4);
+            Console.Write("Word: {0}", player.PlayerWord);
+
+            for(int i = MenuXPosition; i < Console.WindowWidth; i++)
+            {
+                Console.SetCursorPosition(i, PlayerInfoCordinateY + 6);
+                Console.Write(MenuCHar);
+            }          
+        }
+        static void ConsoleParameters()
+        {
+            Console.SetWindowSize(110, 30);
+            Console.BufferHeight = Console.WindowHeight;
+            Console.BufferWidth = Console.WindowWidth;
+        }
+        //end menu things
+
+
     }
 }
