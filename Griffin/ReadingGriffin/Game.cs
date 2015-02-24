@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.IO;
 
 namespace ReadingGriffin
 {
@@ -15,7 +16,7 @@ namespace ReadingGriffin
 
         static int LetterGathererX = Console.WindowWidth / 2 - 2;
         static int GathererSize = 3;
-        static int LetterPositionY = 0;
+ //       static int LetterPositionY = 0;   // never used ????
         static Random Count = new Random();
 
         static List<int> positionX = new List<int>();
@@ -24,7 +25,7 @@ namespace ReadingGriffin
 
         static void Main()
         {
-            //menu mehods use
+            //menu methods use
             Player newPlayer = new Player();
             PlayerInfo(newPlayer);
             ConsoleParameters();
@@ -40,10 +41,6 @@ namespace ReadingGriffin
                 positionX.Add(0);
                 positionY.Add(0);
             }
-
-//          Console.WriteLine(FindWord("dog") ? "Word exists" : "Word does not exist"); 
-//          Console.WriteLine(FindWord("dgfhjkll;kjhgf") ? "Word exists" : "Word does not exist");
-//          Console.Read();
 
             GetLetter();
             while (true)
@@ -68,7 +65,9 @@ namespace ReadingGriffin
             {
                 char randomLetter = letters[generateRandomLetter.Next(0, 25)];
                 Letters.Add(randomLetter);
+ //               Console.Write(randomLetter+" ");
             }
+ //           Console.Read();
         }
 
         static void PrintAtPosition(int x, int y, char symbol)
@@ -91,14 +90,14 @@ namespace ReadingGriffin
             {
                 if (Console.ReadKey().Key == ConsoleKey.RightArrow)
                 {
-                    if (LetterGathererX != Console.WindowWidth - 3)
+                    if (LetterGathererX < Console.WindowWidth - 3)
                     {
                         LetterGathererX++;
                     }
                 }
                 else if (Console.ReadKey().Key == ConsoleKey.LeftArrow)
                 {
-                    if (LetterGathererX != 0)
+                    if (LetterGathererX > 0)
                     {
                         LetterGathererX--;
                     }
@@ -238,27 +237,61 @@ namespace ReadingGriffin
         // scan the dictionary for the "catched" word
         static bool FindWord(string searchedWord)
         {
+            if (searchedWord.Length > 10)
+            {
+                throw new ArgumentException("The word is too long!");
+            }
             string line;
 
-
-            using (System.IO.StreamReader file = new System.IO.StreamReader(@"../../wordlist.txt"))
+            try
             {
-                while ((line = file.ReadLine()) != null)
+
+                using (System.IO.StreamReader vocabularyFile = new System.IO.StreamReader(@"../../wordlist.txt"))
                 {
-                    if (line == searchedWord)
+                    while ((line = vocabularyFile.ReadLine()) != null)
                     {
-                        // sb.AppendLine(line.ToString());
-                        //   Console.WriteLine("Word found! ");
-                        // Console.WriteLine(sb.ToString());
-                        return true;
+                        if (line == searchedWord)
+                        {
+                            // sb.AppendLine(line.ToString());
+                            //   Console.WriteLine("Word found! ");
+                            // Console.WriteLine(sb.ToString());
+
+                            return true;
+                        }
                     }
-
+                    return false;
                 }
-                return false;
             }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("Access Denied,security or I/O error!\n");
+                Environment.Exit(0);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.Error.WriteLine("Error: (0)\n", ex.Message);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine("Can't find the path to the file or directory!\n");
+                Environment.Exit(0);
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Error reading file!\n");
+                Environment.Exit(0);
+            }
+            return false;
 
-        }
-
+         }
+        
+//      private static void CheckWordInVocabulary()
+//      {
+//          Console.WriteLine(FindWord("spider") ? "Word exists" : "Word does not exist");
+//          Console.WriteLine(FindWord("sdfsdf") ? "Word exists" : "Word does not exist");
+//
+//          Console.Read();
+//      }
 
     }
 }
