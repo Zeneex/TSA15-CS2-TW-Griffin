@@ -4,7 +4,7 @@ using System.Threading;
 using System.Text;
 using System.IO;
 
-class FallingRocks
+class FallingChars
 {
     const int PlayerInfoCordinateY = 2;
     public const int MenuXPosition = 80;
@@ -106,6 +106,7 @@ class FallingRocks
             }
 
             PrintMenu(newPlayer);
+            PrintOldStats(BestPlayersInfo, WorstPlayersInfo);
             Thread.Sleep(300);               //Game speed depends on the level - slow the program on higher level
         }
     }
