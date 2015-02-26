@@ -9,8 +9,8 @@ class FallingChars
     const int PlayerInfoCordinateY = 2;
     public const int MenuXPosition = 80;
     public const char MenuCHar = '*';
-    public const string BestPlayersFile = @"BestPlayers.txt";
-    public const string WorstPlayersFile = @"WorstPlayers.txt";
+    public const string BestPlayersFile = @"..\..\BestPlayers.txt";
+    public const string WorstPlayersFile = @"..\..\WorstPlayers.txt";
 
     public static List<string> BestPlayersInfo = new List<string>();
     public static List<string> WorstPlayersInfo = new List<string>();
