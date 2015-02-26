@@ -44,13 +44,10 @@ class FallingChars
 
     static void Main()
     {
-//<<<<<<< HEAD
+        //<<<<<<< HEAD
         Console.SetWindowSize(100, 30); //ako dade nqkakva greshka probvaite da mahnete tozi red
-//=======
+        //=======
         //menu tings run
-        BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
-        WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
-
         Console.BufferWidth = Console.WindowWidth = 110;    //clear the right scrollbar
         Console.BufferHeight = Console.WindowHeight = 30;     //clear the down scrollbar
         Console.Title = "HELP THE GRIFFIN TO MAKE WORDS";
@@ -58,8 +55,10 @@ class FallingChars
         Player newPlayer = new Player();
         PlayerInfo(newPlayer);
         PrintMenu(newPlayer);
+        BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
+        WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
         //end
-//>>>>>>> origin/master
+        //>>>>>>> origin/master
 
         int playfield = 80;                  //Define the playfield so that it wouldn't crash with the menu 
         int score = 0;
@@ -261,7 +260,7 @@ class FallingChars
         }
         writer.Close();
     }
-    
+
     //menu tings end
 
 
@@ -317,7 +316,7 @@ class FallingChars
             ConsoleKeyInfo pressedKey = Console.ReadKey(true);
             if (pressedKey.Key == ConsoleKey.Spacebar)
             {
-                if(FindWord(player.PlayerWord))
+                if (FindWord(player.PlayerWord))
                 {
                     player.Score += player.PlayerWord.Length;
                 }
