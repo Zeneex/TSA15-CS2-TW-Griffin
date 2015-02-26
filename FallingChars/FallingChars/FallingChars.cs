@@ -44,14 +44,7 @@ class FallingChars
 
     static void Main()
     {
-        //menu tings run
-        BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
-        WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
-
-        Player newPlayer = new Player();
-        PlayerInfo(newPlayer);
-        PrintMenu(newPlayer);
-        //end
+        Console.SetWindowSize(100, 30); //ako dade nqkakva greshka probvaite da mahnete tozi red
 
         Console.BufferWidth = Console.WindowWidth = 110;    //clear the right scrollbar
         Console.BufferHeight = Console.WindowHeight = 30;     //clear the down scrollbar
@@ -63,6 +56,15 @@ class FallingChars
         char[] latinAlphabet = {'A', 'B','E', 'C','O', 'D', 'U', 'F', 'I','G', 'E','H', 'I', 'J','A', 'K', 'O','L', 'U','M','A',
                               'N', 'O', 'P','E', 'Q', 'I','R', 'U','S', 'A', 'T', 'U', 'V', 'E', 'W', 'O','X', 'U','Y','I','Z'};
 
+
+        //menu tings run
+        BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
+        WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
+
+        Player newPlayer = new Player();
+        PlayerInfo(newPlayer);
+        PrintMenu(newPlayer);
+        //end
 
         Random randomGen = new Random();
 
@@ -79,7 +81,7 @@ class FallingChars
 
             GenerateLetterChain(playfield, latinAlphabet, randomGen, letters);
 
-            griffin = MoveGriffin(playfield, griffin);
+            griffin = MoveGriffin(playfield, griffin, newPlayer);
 
             List<GameObject> currentLetters = new List<GameObject>();
 
@@ -108,7 +110,7 @@ class FallingChars
 
             PrintMenu(newPlayer);
             PrintOldStats(BestPlayersInfo, WorstPlayersInfo);
-            Thread.Sleep(300);               //Game speed depends on the level - slow the program on higher level
+            Thread.Sleep(100);               //Game speed depends on the level - slow the program on higher level
         }
     }
 
@@ -215,14 +217,30 @@ class FallingChars
 
     static List<string> CheckIsInClasation(List<string> scores, Player player)
     {
-        for (int i = 1; i < scores.Count; i += 2)
+        if (player.Score >= 0)
         {
-            if (player.Score > int.Parse(scores[i]))
+            for (int i = 1; i < scores.Count; i += 2)
             {
-                scores.Insert(i - 1, player.Name);
-                scores.Insert(i, player.Score.ToString());
-                scores.RemoveRange(scores.Count - 2, 2);
-                break;
+                if (player.Score > int.Parse(scores[i]))
+                {
+                    scores.Insert(i - 1, player.Name);
+                    scores.Insert(i, player.Score.ToString());
+                    scores.RemoveRange(scores.Count - 2, 2);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 1; i < scores.Count; i += 2)
+            {
+                if (player.Score > int.Parse(scores[i]))
+                {
+                    scores.Insert(i - 1, player.Name);
+                    scores.Insert(i, player.Score.ToString());
+                    scores.RemoveRange(0, 2);
+                    break;
+                }
             }
         }
         return scores;
@@ -233,14 +251,12 @@ class FallingChars
     {
         var newScore = CheckIsInClasation(scores, player);
         var writer = new StreamWriter(path);
-        //if (path == @"BestPlayers.txt")
-        //{
+
         for (int i = 0, j = 1; i < scores.Count; i += 2, j += 2)
         {
             writer.WriteLine("{0} {1}", scores[i], scores[j]);
         }
         writer.Close();
-        //}
     }
 
     //menu stuff
@@ -295,13 +311,17 @@ class FallingChars
         }
     }
 
-    private static GameObject MoveGriffin(int playfield, GameObject griffin)
+    private static GameObject MoveGriffin(int playfield, GameObject griffin, Player player)
     {
         while (Console.KeyAvailable)            //Move the griffin if arrow key is pressed;
         {
             ConsoleKeyInfo pressedKey = Console.ReadKey(true);
             if (pressedKey.Key == ConsoleKey.Spacebar)
             {
+                if(FindWord(player.PlayerWord))
+                {
+                    player.Score += player.PlayerWord.Length;
+                }
                 Console.WriteLine(wordToCheck);
                 Console.Read();
             }
