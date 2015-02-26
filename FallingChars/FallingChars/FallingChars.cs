@@ -93,6 +93,7 @@ class FallingChars
 
             if (detectCollision)                      //on collision assume that the griffin has got a letter which is to be added to the word to be checked
             {
+                newPlayer.PlayerWord += gotLetter.ToString();
                 wordToCheck.Append(gotLetter);  //append the letter to the word
             }
 
