@@ -48,16 +48,16 @@ class FallingChars
         BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
         WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
 
+        Console.BufferWidth = Console.WindowWidth = 110;    //clear the right scrollbar
+        Console.BufferHeight = Console.WindowHeight = 30;     //clear the down scrollbar
+        Console.Title = "HELP THE GRIFFIN TO MAKE WORDS";
+
         Player newPlayer = new Player();
         PlayerInfo(newPlayer);
         PrintMenu(newPlayer);
         //end
 
-        Console.BufferWidth = Console.WindowWidth = 110;    //clear the right scrollbar
-        Console.BufferHeight = Console.WindowHeight = 30;     //clear the down scrollbar
-        Console.Title = "HELP THE GRIFFIN TO MAKE WORDS";
         int playfield = 80;                  //Define the playfield so that it wouldn't crash with the menu 
-        int lives = 3;
         int score = 0;
         int level = 0;
         char[] latinAlphabet = {'A', 'B','E', 'C','O', 'D', 'U', 'F', 'I','G', 'E','H', 'I', 'J','A', 'K', 'O','L', 'U','M','A',
@@ -95,6 +95,7 @@ class FallingChars
             {
                 newPlayer.PlayerWord += gotLetter.ToString();
                 wordToCheck.Append(gotLetter);  //append the letter to the word
+                newPlayer.PlayerWord += gotLetter.ToString();
             }
 
             DrawObjectOnPosition(griffin.x - 1, griffin.y, 'G', griffin.color);
