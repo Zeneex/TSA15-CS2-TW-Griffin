@@ -44,27 +44,29 @@ class FallingChars
 
     static void Main()
     {
+//<<<<<<< HEAD
         Console.SetWindowSize(100, 30); //ako dade nqkakva greshka probvaite da mahnete tozi red
+//=======
+        //menu tings run
+        BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
+        WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
 
         Console.BufferWidth = Console.WindowWidth = 110;    //clear the right scrollbar
         Console.BufferHeight = Console.WindowHeight = 30;     //clear the down scrollbar
         Console.Title = "HELP THE GRIFFIN TO MAKE WORDS";
-        int playfield = 80;                  //Define the playfield so that it wouldn't crash with the menu 
-        int lives = 3;
-        int score = 0;
-        int level = 0;
-        char[] latinAlphabet = {'A', 'B','E', 'C','O', 'D', 'U', 'F', 'I','G', 'E','H', 'I', 'J','A', 'K', 'O','L', 'U','M','A',
-                              'N', 'O', 'P','E', 'Q', 'I','R', 'U','S', 'A', 'T', 'U', 'V', 'E', 'W', 'O','X', 'U','Y','I','Z'};
-
-
-        //menu tings run
-        BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
-        WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
 
         Player newPlayer = new Player();
         PlayerInfo(newPlayer);
         PrintMenu(newPlayer);
         //end
+//>>>>>>> origin/master
+
+        int playfield = 80;                  //Define the playfield so that it wouldn't crash with the menu 
+        int score = 0;
+        int level = 3;
+        char[] latinAlphabet = {'A', 'B','E', 'C','O', 'D', 'U', 'F', 'I','G', 'E','H', 'I', 'J','A', 'K', 'O','L', 'U','M','A',
+                              'N', 'O', 'P','E', 'Q', 'I','R', 'U','S', 'A', 'T', 'U', 'V', 'E', 'W', 'O','X', 'U','Y','I','Z'};
+
 
         Random randomGen = new Random();
 
@@ -97,6 +99,7 @@ class FallingChars
             {
                 newPlayer.PlayerWord += gotLetter.ToString();
                 wordToCheck.Append(gotLetter);  //append the letter to the word
+                newPlayer.PlayerWord += gotLetter.ToString();
             }
 
             DrawObjectOnPosition(griffin.x - 1, griffin.y, 'G', griffin.color);
@@ -258,11 +261,7 @@ class FallingChars
         }
         writer.Close();
     }
-
-    //menu stuff
-
-
-
+    
     //menu tings end
 
 
@@ -322,8 +321,12 @@ class FallingChars
                 {
                     player.Score += player.PlayerWord.Length;
                 }
-                Console.WriteLine(wordToCheck);
-                Console.Read();
+                else
+                {
+                    player.Score--;
+                }
+                //Console.WriteLine(wordToCheck);
+                //Console.Read();
             }
             else
             {

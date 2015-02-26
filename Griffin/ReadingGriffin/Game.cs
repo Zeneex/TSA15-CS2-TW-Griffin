@@ -9,7 +9,7 @@ namespace ReadingGriffin
 {
     class Game
     {
-        //menu constants
+/*        //menu constants
         public const int MenuXPosition = 80;
         public const char MenuCHar = '*';
         //
@@ -292,6 +292,6 @@ namespace ReadingGriffin
 //
 //          Console.Read();
 //      }
-
+*/
     }
 }
