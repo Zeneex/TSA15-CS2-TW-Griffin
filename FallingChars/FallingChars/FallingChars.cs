@@ -98,7 +98,6 @@ class FallingChars
             {
                 newPlayer.PlayerWord += gotLetter.ToString();
                 wordToCheck.Append(gotLetter);  //append the letter to the word
-                newPlayer.PlayerWord += gotLetter.ToString();
             }
 
             DrawObjectOnPosition(griffin.x - 1, griffin.y, 'G', griffin.color);
@@ -124,12 +123,14 @@ class FallingChars
         string line = readerBest.ReadLine();
         using (readerBest)
         {
-            while (line != null)
+            int br = 0;
+            while (br<5)
             {
                 var playerInfo = line.Split(' ');
                 players.Add(playerInfo[0]);
                 players.Add(playerInfo[1]);
                 line = readerBest.ReadLine();
+                br++;
             }
         }
         return players;
@@ -236,11 +237,11 @@ class FallingChars
         {
             for (int i = 1; i < scores.Count; i += 2)
             {
-                if (player.Score > int.Parse(scores[i]))
+                if (player.Score < int.Parse(scores[i]))
                 {
                     scores.Insert(i - 1, player.Name);
                     scores.Insert(i, player.Score.ToString());
-                    scores.RemoveRange(0, 2);
+                    scores.RemoveRange(scores.Count - 2, 2);
                     break;
                 }
             }
@@ -253,7 +254,7 @@ class FallingChars
     {
         var newScore = CheckIsInClasation(scores, player);
         var writer = new StreamWriter(path);
-
+        
         for (int i = 0, j = 1; i < scores.Count; i += 2, j += 2)
         {
             writer.WriteLine("{0} {1}", scores[i], scores[j]);
@@ -301,11 +302,6 @@ class FallingChars
             {
                 currentLetters.Add(currentLetter);
             }
-            else
-            {
-                score++;
-                if (level < 5) level = score / 50;
-            }
         }
     }
 
@@ -316,14 +312,18 @@ class FallingChars
             ConsoleKeyInfo pressedKey = Console.ReadKey(true);
             if (pressedKey.Key == ConsoleKey.Spacebar)
             {
-                if (FindWord(player.PlayerWord))
+                if (FindWord(player.PlayerWord.ToLower()))
                 {
-                    player.Score += player.PlayerWord.Length;
+                    player.Score += player.PlayerWord.Length*10;
+                    WriteToFiles(BestPlayersInfo, player, BestPlayersFile); 
                 }
                 else
                 {
-                    player.Score--;
+                    player.Score -= player.PlayerWord.Length*5;
+                    WriteToFiles(WorstPlayersInfo, player, WorstPlayersFile); 
                 }
+                player.PlayerWord = string.Empty;
+
                 //Console.WriteLine(wordToCheck);
                 //Console.Read();
             }
@@ -339,6 +339,10 @@ class FallingChars
                     {
                         griffin.x--;
                     }
+                if(pressedKey.Key == ConsoleKey.Escape)
+                {
+                    System.Environment.Exit(0);
+                }
             }
 
         }
@@ -394,10 +398,10 @@ class FallingChars
     // scan the dictionary for the "catched" word
     static bool FindWord(string searchedWord)
     {
-        if (searchedWord.Length > 10)
-        {
-            throw new ArgumentException("The word is too long!");
-        }
+        //if (searchedWord.Length > 10)
+        //{
+        //    throw new ArgumentException("The word is too long!");
+        //}
         string line;
 
         try

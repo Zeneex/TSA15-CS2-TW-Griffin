@@ -1,5 +1,5 @@
-Pesho 50
-gosho 20
-ivan 10
-kamen 30
-kamen 30
+kamn 175
+kamn 170
+kamn 165
+kamn 160
+kamn 155
