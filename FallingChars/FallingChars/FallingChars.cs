@@ -9,8 +9,8 @@ class FallingChars
     const int PlayerInfoCordinateY = 2;
     public const int MenuXPosition = 80;
     public const char MenuCHar = '*';
-    public const string BestPlayersFile = @"BestPlayers.txt";
-    public const string WorstPlayersFile = @"WorstPlayers.txt";
+    public const string BestPlayersFile = @"..\..\BestPlayers.txt";
+    public const string WorstPlayersFile = @"..\..\WorstPlayers.txt";
 
     public static List<string> BestPlayersInfo = new List<string>();
     public static List<string> WorstPlayersInfo = new List<string>();
@@ -93,6 +93,7 @@ class FallingChars
 
             if (detectCollision)                      //on collision assume that the griffin has got a letter which is to be added to the word to be checked
             {
+                newPlayer.PlayerWord += gotLetter.ToString();
                 wordToCheck.Append(gotLetter);  //append the letter to the word
             }
 
