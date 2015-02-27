@@ -26,22 +26,22 @@ class FallingChars
 
     static StringBuilder wordToCheck = new StringBuilder();  // the string that the griffin will gather from the falling letters
 
-    static ConsoleColor[] colors = { ConsoleColor.Gray, ConsoleColor.Cyan, ConsoleColor.Magenta, ConsoleColor.Yellow, ConsoleColor.Yellow };
+    static ConsoleColor[] colors = { ConsoleColor.Gray};
 
     public static void DrawObjectOnPosition(int x, int y, char c, ConsoleColor color)
     {
         Console.SetCursorPosition(x, y);
-        Console.ForegroundColor = color;
+        //Console.ForegroundColor = color;
         Console.Write(c);
     }
 
     public static void DrawStringOnPosition(int x, int y, string s, ConsoleColor color)
     {
         Console.SetCursorPosition(x, y);
-        Console.ForegroundColor = color;
+        //Console.ForegroundColor = color;
         Console.Write(s);
     }
-
+    static Random randomGen = new Random();
     static void Main()
     {
         //<<<<<<< HEAD
@@ -66,8 +66,6 @@ class FallingChars
         char[] latinAlphabet = {'A', 'B','E', 'C','O', 'D', 'U', 'F', 'I','G', 'E','H', 'I', 'J','A', 'K', 'O','L', 'U','M','A',
                               'N', 'O', 'P','E', 'Q', 'I','R', 'U','S', 'A', 'T', 'U', 'V', 'E', 'W', 'O','X', 'U','Y','I','Z'};
 
-
-        Random randomGen = new Random();
 
         GameObject griffin = InitializeGriffin(playfield);
 
@@ -111,7 +109,7 @@ class FallingChars
 
             PrintMenu(newPlayer);
             PrintOldStats(BestPlayersInfo, WorstPlayersInfo);
-            Thread.Sleep(100);               //Game speed depends on the level - slow the program on higher level
+            Thread.Sleep(300);               //Game speed depends on the level - slow the program on higher level
         }
     }
 
@@ -126,7 +124,8 @@ class FallingChars
             int br = 0;
             while (br<5)
             {
-                var playerInfo = line.Split(' ');
+                char[] invalidChars = {' '};
+                var playerInfo = line.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries);
                 players.Add(playerInfo[0]);
                 players.Add(playerInfo[1]);
                 line = readerBest.ReadLine();
@@ -312,6 +311,11 @@ class FallingChars
             ConsoleKeyInfo pressedKey = Console.ReadKey(true);
             if (pressedKey.Key == ConsoleKey.Spacebar)
             {
+                if(player.PlayerWord.Length == null)
+                {
+                    continue;
+                }
+
                 if (FindWord(player.PlayerWord.ToLower()))
                 {
                     player.Score += player.PlayerWord.Length*10;
