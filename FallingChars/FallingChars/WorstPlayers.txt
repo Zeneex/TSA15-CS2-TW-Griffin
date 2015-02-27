@@ -1,5 +1,5 @@
- kamen -90
- kamen -65
- kamen -50
- kamen -35
- kamen -20
+kamen -75
+kamen -45
+kamen -35
+kamen -25
+kamen -25

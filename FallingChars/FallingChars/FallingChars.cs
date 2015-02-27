@@ -319,11 +319,18 @@ class FallingChars
                 if (FindWord(player.PlayerWord.ToLower()))
                 {
                     player.Score += player.PlayerWord.Length*10;
-                    WriteToFiles(BestPlayersInfo, player, BestPlayersFile); 
                 }
                 else
                 {
                     player.Score -= player.PlayerWord.Length*5;
+                }
+
+                if(player.Score>=0)
+                {
+                    WriteToFiles(BestPlayersInfo, player, BestPlayersFile); 
+                }
+                else
+                {
                     WriteToFiles(WorstPlayersInfo, player, WorstPlayersFile); 
                 }
                 player.PlayerWord = string.Empty;
