@@ -26,31 +26,37 @@ class FallingChars
 
     static StringBuilder wordToCheck = new StringBuilder();  // the string that the griffin will gather from the falling letters
 
-    static ConsoleColor[] colors = { ConsoleColor.Gray };
+    static ConsoleColor[] colors =
+    {
+        ConsoleColor.Gray,
+    };
 
     public static void DrawObjectOnPosition(int x, int y, char c, ConsoleColor color)
     {
         Console.SetCursorPosition(x, y);
-        //Console.ForegroundColor = color;
+        Console.ForegroundColor = color;
         Console.Write(c);
+        Console.ResetColor();
     }
 
     public static void DrawStringOnPosition(int x, int y, string s, ConsoleColor color)
     {
         Console.SetCursorPosition(x, y);
-        //Console.ForegroundColor = color;
+        Console.ForegroundColor = color;
         Console.Write(s);
+        Console.ResetColor();
     }
     static Random randomGen = new Random();
     public static string playerName = string.Empty;
 
     static void Main()
     {
-        //begin Title screen + Welcome
+        #region Title screen + Welcome
         ConsoleHelper.SetConsoleFont(2);
         TitleScreen();
         playerName = GetPlayerName();
-        //end Title screen + Welcome
+        Console.Clear();
+        #endregion
 
         //<<<<<<< HEAD
         //Console.SetWindowSize(100, 60); //ako dade nqkakva greshka probvaite da mahnete tozi red
@@ -62,7 +68,7 @@ class FallingChars
 
         Player newPlayer = new Player();
         PlayerInfo(newPlayer);
-        PrintMenu(newPlayer);
+        PrintMenu(newPlayer);//prints the full stats on the right
         BestPlayersInfo = ReadInfoFromFile(BestPlayersInfo, BestPlayersFile);
         WorstPlayersInfo = ReadInfoFromFile(WorstPlayersInfo, WorstPlayersFile);
         //end
@@ -98,14 +104,19 @@ class FallingChars
 
             char gotLetter = CheckForCollision(ref griffin, letters, ref detectCollision, ref getBonus);
 
-            Console.Clear();                                            //Clear the console;
-
-            if (detectCollision)                      //on collision assume that the griffin has got a letter which is to be added to the word to be checked
+            if (detectCollision)                        //on collision assume that the griffin has got a letter which is to be added to the word to be checked
             {
                 newPlayer.PlayerWord += gotLetter.ToString();
-                wordToCheck.Append(gotLetter);  //append the letter to the word
+                wordToCheck.Append(gotLetter);          //append the letter to the word
+            }
+            else if (getBonus)
+            {
+                newPlayer.Score += 20;
+                getBonus = false;
             }
 
+            //Console.Clear();                            //Clear the console;
+            ClearPlayfield(playfield);
             DrawObjectOnPosition(griffin.x - 1, griffin.y, 'G', griffin.color);
             DrawObjectOnPosition(griffin.x, griffin.y, griffin.c, griffin.color);
             DrawObjectOnPosition(griffin.x + 1, griffin.y, 'G', griffin.color);
@@ -117,8 +128,18 @@ class FallingChars
 
             PrintMenu(newPlayer);
             PrintOldStats(BestPlayersInfo, WorstPlayersInfo);
-            Thread.Sleep(300);               //Game speed depends on the level - slow the program on higher level
+            Thread.Sleep(150);               //Game speed depends on the level - slow the program on higher level
         }
+    }
+
+    private static void ClearPlayfield(int playfield)
+    {
+        Console.SetCursorPosition(0, 0);
+        for (int i = 0; i < Console.BufferHeight - 1; i++)
+        {
+            Console.WriteLine(new string(' ', playfield));
+        }
+        Console.Write(new string(' ', playfield));
     }
 
     //menu thinsg start
@@ -148,8 +169,11 @@ class FallingChars
         public string Name { get; set; }
         public int Score { get; set; }
         public DateTime PlayDate { get; set; }
-
         public string PlayerWord { get; set; }
+        public Player()
+        {
+            this.PlayerWord = string.Empty;
+        }
     }
 
     static void PlayerInfo(Player player)
@@ -183,10 +207,10 @@ class FallingChars
         Console.Write("Name: {0}", player.Name);
 
         Console.SetCursorPosition(MenuXPosition + 3, PlayerInfoCordinateY + 2);
-        Console.Write("Score: {0}", player.Score);
+        Console.Write("Score: {0}{1}", player.Score, "     ");
 
         Console.SetCursorPosition(MenuXPosition + 3, PlayerInfoCordinateY + 4);
-        Console.Write("Word: {0}", player.PlayerWord);
+        Console.Write("Word: {0}{1}", player.PlayerWord, new string(' ', 22 - (player.PlayerWord).Length));
 
         for (int i = MenuXPosition; i < Console.WindowWidth; i++)
         {
@@ -206,7 +230,7 @@ class FallingChars
         for (int i = 0, j = 1; i < bestPlayers.Count; i += 2, j += 2)
         {
             Console.SetCursorPosition(MenuXPosition + 6, PlayerInfoCordinateY + bestY);
-            Console.Write("{0}: {1}", bestPlayers[i], bestPlayers[j]);
+            Console.Write("{0}: {1}{2}", bestPlayers[i], bestPlayers[j], "     ");
             bestY++;
         }
 
@@ -219,7 +243,7 @@ class FallingChars
         for (int i = 0, j = 1; i < worstPlayers.Count; i += 2, j += 2)
         {
             Console.SetCursorPosition(MenuXPosition + 6, PlayerInfoCordinateY + worstY);
-            Console.Write("{0}: {1}", worstPlayers[i], worstPlayers[j]);
+            Console.Write("{0}: {1}{2}", worstPlayers[i], worstPlayers[j], "     ");
             worstY++;
         }
 
@@ -327,10 +351,12 @@ class FallingChars
                 if (FindWord(player.PlayerWord.ToLower()))
                 {
                     player.Score += player.PlayerWord.Length * 10;
+                    Console.Beep(1500, 500);                        //beep for invalid word
                 }
                 else
                 {
                     player.Score -= player.PlayerWord.Length * 5;
+                    Console.Beep(500, 500);                        //beep for a valid word
                 }
 
                 if (player.Score >= 0)
@@ -378,21 +404,24 @@ class FallingChars
         return griffin;
     }
 
-    // Generate a 1-to-4-characters chain of a random chosen Latin letter, or a bonus heart and add to the letters list 
+    // Generate a 1-to-3-characters chain of a random chosen Latin letter, or a bonus heart and add to the letters list 
     private static void GenerateLetterChain(int playfield, char[] latinAlphabet, Random randomGen, List<GameObject> letters)
     {
         int chance = randomGen.Next(0, 100);
         int letterX = randomGen.Next(0, playfield - 1);
         char letterChar;
+        ConsoleColor letterCol;
         if (chance < 3)
         {
-            letterChar = (char)3;
+            letterChar = (char)3;                           //heart symbol character
+            letterCol = ConsoleColor.Red;                   //heart symbol color
         }
         else
         {
             letterChar = latinAlphabet[randomGen.Next(0, latinAlphabet.Length)];
+            letterCol = colors[randomGen.Next(0, colors.Length)];
         }
-        ConsoleColor letterCol = colors[randomGen.Next(0, colors.Length)];
+        
         for (int i = 1; i <= randomGen.Next(1, 4); i++)
         {
             GameObject newLetter = new GameObject();
@@ -468,6 +497,7 @@ class FallingChars
     //print Griffin title screen
     static void TitleScreen()
     {
+        //config
         Console.Clear();
 
         int conHeight = 60;
@@ -479,25 +509,47 @@ class FallingChars
         else
             Console.BufferHeight = Console.WindowHeight = conHeight;
 
+        //read-parse-assign the image into matrix
         string titleFile = @"..\..\GriffinGraphic.txt";
         string titleText = File.ReadAllText(titleFile, System.Text.Encoding.UTF8);
-        string[] titleImage = titleText.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-        string buffer = null;
 
-        Console.Write("\n" + new string(' ', 10));
-        for (int i = 0; i < titleImage.Length; i++, Console.Write("\n" + new string(' ', 10)))
+        string[] titleImageLines = titleText.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        int titleImageRows = titleImageLines.Length;
+
+        string[] titleImageCells = titleImageLines[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        int titleImageCols = titleImageCells.Length;
+
+        string[,] titleImage = new string[titleImageRows, titleImageCols];              //build matrix
+
+        for (int row = 0; row < titleImageRows; row++)
         {
-            buffer = titleImage[i];
-            for (int j = 0; j < buffer.Length; j++)
+            for (int col = 0; col < titleImageCols; col++)
             {
+                titleImage[row, col] = titleImageCells[col];
+            }
+            if (row != titleImageRows - 1)
+            {
+                titleImageCells = titleImageLines[row + 1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            }
+        }
+
+        //print image
+        string buffer = string.Empty;
+        Console.Write("\n" + new string(' ', 10));
+        for (int row = 0; row < titleImageRows; row++, Console.Write("\n" + new string(' ', 10)))
+        {
+            for (int col = 0; col < titleImageCols; col++)
+            {
+                buffer = titleImage[row, col];
+
                 Console.ResetColor();
-                if (buffer[j] == '#')
+                if (buffer[0] == '#')
                 {
                     Console.Write(" ");
                     continue;
                 }
                 //set the foreground color
-                switch (buffer[j])
+                switch (buffer[0])
                 {
                     case 'r': Console.ForegroundColor = ConsoleColor.Red; break;
                     case 'g': Console.ForegroundColor = ConsoleColor.Green; break;
@@ -514,9 +566,8 @@ class FallingChars
                     case 'C': Console.ForegroundColor = ConsoleColor.DarkCyan; break;
                     case 'M': Console.ForegroundColor = ConsoleColor.DarkMagenta; break;
                 }
-                j++;
                 //set the background color
-                switch (buffer[j])
+                switch (buffer[1])
                 {
                     case 'r': Console.BackgroundColor = ConsoleColor.Red; break;
                     case 'g': Console.BackgroundColor = ConsoleColor.Green; break;
@@ -533,9 +584,8 @@ class FallingChars
                     case 'C': Console.BackgroundColor = ConsoleColor.DarkCyan; break;
                     case 'M': Console.BackgroundColor = ConsoleColor.DarkMagenta; break;
                 }
-                j++;
                 //set the symbol and print
-                switch (buffer[j])
+                switch (buffer[2])
                 {
                     case 'l': Console.Write('░'); break;
                     case 'm': Console.Write('▒'); break;
@@ -544,6 +594,7 @@ class FallingChars
                 }
             }
         }
+
         //print welcome message
         Console.WriteLine();
         string presents = "...Team 'Griffin' presents 'Falling Letters'...";
