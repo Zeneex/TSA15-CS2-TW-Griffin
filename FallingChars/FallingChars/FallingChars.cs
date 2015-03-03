@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Text;
 using System.IO;
+using System.Runtime.InteropServices;
 
 class FallingChars
 {
@@ -15,7 +16,6 @@ class FallingChars
     public static List<string> BestPlayersInfo = new List<string>();
     public static List<string> WorstPlayersInfo = new List<string>();
 
-
     struct GameObject
     {
         public int x;
@@ -26,7 +26,7 @@ class FallingChars
 
     static StringBuilder wordToCheck = new StringBuilder();  // the string that the griffin will gather from the falling letters
 
-    static ConsoleColor[] colors = { ConsoleColor.Gray};
+    static ConsoleColor[] colors = { ConsoleColor.Gray };
 
     public static void DrawObjectOnPosition(int x, int y, char c, ConsoleColor color)
     {
@@ -42,14 +42,22 @@ class FallingChars
         Console.Write(s);
     }
     static Random randomGen = new Random();
+    public static string playerName = string.Empty;
+
     static void Main()
     {
+        //begin Title screen + Welcome
+        ConsoleHelper.SetConsoleFont(2);
+        TitleScreen();
+        playerName = GetPlayerName();
+        //end Title screen + Welcome
+
         //<<<<<<< HEAD
-        Console.SetWindowSize(100, 30); //ako dade nqkakva greshka probvaite da mahnete tozi red
+        //Console.SetWindowSize(100, 60); //ako dade nqkakva greshka probvaite da mahnete tozi red
         //=======
         //menu tings run
         Console.BufferWidth = Console.WindowWidth = 110;    //clear the right scrollbar
-        Console.BufferHeight = Console.WindowHeight = 30;     //clear the down scrollbar
+        Console.BufferHeight = Console.WindowHeight = 45;     //clear the down scrollbar
         Console.Title = "HELP THE GRIFFIN TO MAKE WORDS";
 
         Player newPlayer = new Player();
@@ -122,9 +130,9 @@ class FallingChars
         using (readerBest)
         {
             int br = 0;
-            while (br<5)
+            while (br < 5)
             {
-                char[] invalidChars = {' '};
+                char[] invalidChars = { ' ' };
                 var playerInfo = line.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries);
                 players.Add(playerInfo[0]);
                 players.Add(playerInfo[1]);
@@ -146,8 +154,8 @@ class FallingChars
 
     static void PlayerInfo(Player player)
     {
-        Console.WriteLine("Enter your name.");
-        player.Name = Console.ReadLine();
+        //Console.WriteLine("Enter your name.");
+        player.Name = playerName; //Console.ReadLine();
         char[] invalidChar = { ' ' };
         string[] name = player.Name.Split(invalidChar, StringSplitOptions.RemoveEmptyEntries);
         while (name.Length == 0)
@@ -253,7 +261,7 @@ class FallingChars
     {
         var newScore = CheckIsInClasation(scores, player);
         var writer = new StreamWriter(path);
-        
+
         for (int i = 0, j = 1; i < scores.Count; i += 2, j += 2)
         {
             writer.WriteLine("{0} {1}", scores[i], scores[j]);
@@ -311,27 +319,27 @@ class FallingChars
             ConsoleKeyInfo pressedKey = Console.ReadKey(true);
             if (pressedKey.Key == ConsoleKey.Spacebar)
             {
-                if(player.PlayerWord.Length == null)
+                if (player.PlayerWord.Length == null)
                 {
                     continue;
                 }
 
                 if (FindWord(player.PlayerWord.ToLower()))
                 {
-                    player.Score += player.PlayerWord.Length*10;
+                    player.Score += player.PlayerWord.Length * 10;
                 }
                 else
                 {
-                    player.Score -= player.PlayerWord.Length*5;
+                    player.Score -= player.PlayerWord.Length * 5;
                 }
 
-                if(player.Score>=0)
+                if (player.Score >= 0)
                 {
-                    WriteToFiles(BestPlayersInfo, player, BestPlayersFile); 
+                    WriteToFiles(BestPlayersInfo, player, BestPlayersFile);
                 }
                 else
                 {
-                    WriteToFiles(WorstPlayersInfo, player, WorstPlayersFile); 
+                    WriteToFiles(WorstPlayersInfo, player, WorstPlayersFile);
                 }
                 player.PlayerWord = string.Empty;
 
@@ -350,7 +358,7 @@ class FallingChars
                     {
                         griffin.x--;
                     }
-                if(pressedKey.Key == ConsoleKey.Escape)
+                if (pressedKey.Key == ConsoleKey.Escape)
                 {
                     System.Environment.Exit(0);
                 }
@@ -454,14 +462,172 @@ class FallingChars
             Environment.Exit(0);
         }
         return false;
-
     }
 
-    //      private static void CheckWordInVocabulary()
-    //      {
-    //          Console.WriteLine(FindWord("spider") ? "Word exists" : "Word does not exist");
-    //          Console.WriteLine(FindWord("sdfsdf") ? "Word exists" : "Word does not exist");
-    //
-    //          Console.Read();
-    //      }
+    /*...Zenix code...*/
+    //print Griffin title screen
+    static void TitleScreen()
+    {
+        Console.Clear();
+
+        int conHeight = 60;
+        if (conHeight > Console.LargestWindowHeight)
+            conHeight = Console.LargestWindowHeight;
+
+        if (Console.BufferHeight < conHeight)
+            Console.WindowHeight = Console.BufferHeight = conHeight;
+        else
+            Console.BufferHeight = Console.WindowHeight = conHeight;
+
+        string titleFile = @"..\..\GriffinGraphic.txt";
+        string titleText = File.ReadAllText(titleFile, System.Text.Encoding.UTF8);
+        string[] titleImage = titleText.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        string buffer = null;
+
+        Console.Write("\n" + new string(' ', 10));
+        for (int i = 0; i < titleImage.Length; i++, Console.Write("\n" + new string(' ', 10)))
+        {
+            buffer = titleImage[i];
+            for (int j = 0; j < buffer.Length; j++)
+            {
+                Console.ResetColor();
+                if (buffer[j] == '#')
+                {
+                    Console.Write(" ");
+                    continue;
+                }
+                //set the foreground color
+                switch (buffer[j])
+                {
+                    case 'r': Console.ForegroundColor = ConsoleColor.Red; break;
+                    case 'g': Console.ForegroundColor = ConsoleColor.Green; break;
+                    case 'b': Console.ForegroundColor = ConsoleColor.Blue; break;
+                    case 'y': Console.ForegroundColor = ConsoleColor.Yellow; break;
+                    case 'c': Console.ForegroundColor = ConsoleColor.Cyan; break;
+                    case 'm': Console.ForegroundColor = ConsoleColor.Magenta; break;
+                    case 'w': Console.ForegroundColor = ConsoleColor.White; break;
+
+                    case 'R': Console.ForegroundColor = ConsoleColor.DarkRed; break;
+                    case 'G': Console.ForegroundColor = ConsoleColor.DarkGreen; break;
+                    case 'B': Console.ForegroundColor = ConsoleColor.DarkBlue; break;
+                    case 'Y': Console.ForegroundColor = ConsoleColor.DarkYellow; break;
+                    case 'C': Console.ForegroundColor = ConsoleColor.DarkCyan; break;
+                    case 'M': Console.ForegroundColor = ConsoleColor.DarkMagenta; break;
+                }
+                j++;
+                //set the background color
+                switch (buffer[j])
+                {
+                    case 'r': Console.BackgroundColor = ConsoleColor.Red; break;
+                    case 'g': Console.BackgroundColor = ConsoleColor.Green; break;
+                    case 'b': Console.BackgroundColor = ConsoleColor.Blue; break;
+                    case 'y': Console.BackgroundColor = ConsoleColor.Yellow; break;
+                    case 'c': Console.BackgroundColor = ConsoleColor.Cyan; break;
+                    case 'm': Console.BackgroundColor = ConsoleColor.Magenta; break;
+                    case 'w': Console.BackgroundColor = ConsoleColor.White; break;
+
+                    case 'R': Console.BackgroundColor = ConsoleColor.DarkRed; break;
+                    case 'G': Console.BackgroundColor = ConsoleColor.DarkGreen; break;
+                    case 'B': Console.BackgroundColor = ConsoleColor.DarkBlue; break;
+                    case 'Y': Console.BackgroundColor = ConsoleColor.DarkYellow; break;
+                    case 'C': Console.BackgroundColor = ConsoleColor.DarkCyan; break;
+                    case 'M': Console.BackgroundColor = ConsoleColor.DarkMagenta; break;
+                }
+                j++;
+                //set the symbol and print
+                switch (buffer[j])
+                {
+                    case 'l': Console.Write('░'); break;
+                    case 'm': Console.Write('▒'); break;
+                    case 'd': Console.Write('▓'); break;
+                    case '#': Console.Write(" "); break;
+                }
+            }
+        }
+        //print welcome message
+        Console.WriteLine();
+        string presents = "...Team 'Griffin' presents 'Falling Letters'...";
+        Console.CursorLeft = (Console.BufferWidth - presents.Length) / 2;       //reposition the cursor
+        Console.WriteLine(presents);
+        Console.ReadKey();
+    }
+    //pop player's name prompt screen
+    static string GetPlayerName()
+    {
+        Console.Clear();
+
+        int conWidth = 80;
+        int conHeight = 30;
+
+        if (Console.BufferWidth < conWidth)
+            Console.WindowWidth = Console.BufferWidth = conWidth;
+        else
+            Console.BufferWidth = Console.WindowWidth = conWidth;
+
+        if (Console.BufferHeight < conHeight)
+            Console.WindowHeight = Console.BufferHeight = conHeight;
+        else
+            Console.BufferHeight = Console.WindowHeight = conHeight;
+
+        ConsoleColor conbgcolor = (ConsoleColor)3;
+        ConsoleColor confgcolor = (ConsoleColor)4;
+
+        Console.BackgroundColor = conbgcolor;
+        Console.ForegroundColor = confgcolor;
+        Console.WriteLine(new string(' ', Console.BufferHeight * Console.BufferWidth));
+
+        int promptWindowWidth = 40;
+        int promptWindowHeight = 5;
+
+        if (promptWindowWidth > Console.BufferWidth)
+            promptWindowWidth = Console.BufferWidth;
+        if (promptWindowHeight > Console.BufferHeight)
+            promptWindowHeight = Console.BufferHeight;
+
+        ConsoleColor promptbgcolor = ConsoleColor.DarkBlue;
+        ConsoleColor promptfgcolor = (ConsoleColor)10;
+
+        Console.BackgroundColor = promptbgcolor;
+        Console.ForegroundColor = promptfgcolor;
+        Console.CursorLeft = (Console.BufferWidth - promptWindowWidth) / 2;         //center align the prompt
+        Console.CursorTop = (Console.BufferHeight - promptWindowHeight) / 2;        //middle align the prompt
+
+        for (int row = 0; row < promptWindowHeight; row++)
+        {
+            Console.WriteLine(new string(' ', promptWindowWidth));
+            Console.CursorLeft = (Console.BufferWidth - promptWindowWidth) / 2;     //reposition the cursor
+        }
+
+        string prompt = "Enter your player alias:";
+        int promptRows = 2;
+
+        Console.CursorLeft = (Console.BufferWidth - promptWindowWidth) / 2 + (promptWindowWidth - prompt.Length) / 2;
+        Console.CursorTop = (Console.BufferHeight - promptWindowHeight) / 2 + (promptWindowHeight - promptRows) / 2;
+
+        Console.WriteLine(prompt);
+        Console.CursorLeft = (Console.BufferWidth - promptWindowWidth) / 2 + (promptWindowWidth - prompt.Length) / 2;
+        string playerName = Console.ReadLine();
+
+        Console.ResetColor();
+        return playerName;
+    }
 }
+
+public static class ConsoleHelper
+{
+    private enum StdHandle
+    {
+        OutputHandle = -11
+    }
+
+    [DllImport("kernel32")]
+    private static extern IntPtr GetStdHandle(StdHandle index);
+
+    [DllImport("kernel32")]
+    private extern static bool SetConsoleFont(IntPtr hOutput, uint index);
+
+    public static bool SetConsoleFont(uint index)
+    {
+        return SetConsoleFont(GetStdHandle(StdHandle.OutputHandle), index);
+    }
+}   /*...end Zenix code...*/
